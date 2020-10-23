@@ -1,22 +1,23 @@
 <?xml version="1.0"?>
 <launch>
-
+	<arg name="suffix" default="_nomap"/>
+	
   <!-- Robot -->
   <arg name="robot_id" default="$(optenv ROBOT_ID robot)"/>
   <arg name="prefix" default="$(arg robot_id)_"/>
-
+	
   <!-- Robot configuration -->
   <arg name="kinematics" default="$(optenv ROBOT_KINEMATICS diff)"/>
   <arg name="has_safety_controller" default="$(optenv HAS_SAFETY_CONTROLLER false)"/>
-
+	
   <!-- What navigation config package to use -->
   <arg name="navigation_package" default="$(optenv NAVIGATION_PACKAGE rbares_navigation)"/>
   <arg name="config_folder" default="$(eval find(navigation_package) + '/config')" />
-
+	
   <!-- Topics argumments -->
-  <arg name="cmd_vel_topic" default="move_base/cmd_vel"/>
+  <arg name="cmd_vel_topic" default="robotnik_base_control/cmd_vel"/>
   <arg name="odom_topic" default="robotnik_base_control/odom"/>
-  <arg name="front_scan_topic" default="$(optenv ROBOT_NAVIGATION_FRONT_2D_SCAN front_laser/scan_filtered)"/>
+  <arg name="front_scan_topic" default="$(optenv ROBOT_NAVIGATION_FRONT_2D_SCAN front_laser/scan)"/>
   <arg name="rear_scan_topic" default="$(optenv ROBOT_NAVIGATION_REAR_2D_SCAN rear_laser/scan_filtered)"/>
   <arg name="front_rgbd_to_scan_topic" default="$(optenv ROBOT_NAVIGATION_FRONT_RGBD_TO_SCAN front_rgbd_camera/point_cloud_scan_filtered)"/>
 
@@ -33,7 +34,7 @@
 
   <!-- Maps configuration -->
   <arg name="costmap_common_params" default="costmap_common_params.yaml" />
-  <arg name="global_costmap_params" default="global_costmap_params_nomap.yaml" />
+  <arg name="global_costmap_params" default="global_costmap_params$(arg suffix).yaml" />
   <arg name="local_costmap_params" default="local_costmap_params.yaml" />
 
   <!-- Maps path -->
@@ -62,7 +63,7 @@
   <arg name="base_frame_param_name" default="" /> <!-- this depends on planners used -->
 
   <!-- Run move_base -->
-  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+  <node ns="$(arg robot_id)" pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
 
     <!-- Topics -->
     <remap unless="$(arg has_safety_controller)" from="cmd_vel" to="$(arg cmd_vel_topic)" />
@@ -82,15 +83,25 @@
     <rosparam file="$(arg local_costmap_params_file)" command="load" subst_value="true"/>
 
     <!-- Global planner params-->
-    <rosparam file="$(arg global_planner_params_file)" command="load" subst_value="true"/>
-
+    <!-- <rosparam file="$(arg global_planner_params_file)" command="load" subst_value="true"/> -->
+		
     <!-- Local planner params-->
     <rosparam file="$(arg local_planner_params_file)" command="load" subst_value="true"/>
-
+		
+		<param name="local_costmap/global_frame" value="map"/>
+		<param name="global_costmap/global_frame" value="map"/>
+		<param name="local_costmap/robot_base_frame" value="$(arg base_frame)"/>
+    <param name="global_costmap/robot_base_frame" value="$(arg base_frame)"/>
+    <param name="DWAPlannerROS/global_frame_id" value="$(arg odom_frame)"/>
+		<param name="TebLocalPlannerROS/map_frame" value="map"/>
+		<param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS"/>
+    <remap from="scan" to="$(arg front_scan_topic)"/>
+    <remap from="odom" to="$(arg odom_topic)"/>
+		<remap from="map" to="/map"/>
+		
     <!-- Overwrite frames, should not be used unless reasonable reason -->
     <param if="$(arg overwrite_frames)" name="$(arg odom_frame_param_name)" value="$(arg odom_frame)" />
     <param if="$(arg overwrite_frames)" name="$(arg base_frame_param_name)" value="$(arg base_frame)" />
 
   </node>
-
 </launch>

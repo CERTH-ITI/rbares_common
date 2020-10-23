@@ -35,3 +35,6 @@ conservative_reset:
 aggresive_reset:
   reset_distance: 0.0
   layer_names: [obstacle_laser_layer]
+  
+base_global_planner: "navfn/NavfnROS"
+base_local_planner: "teb_local_planner/TebLocalPlannerROS"
