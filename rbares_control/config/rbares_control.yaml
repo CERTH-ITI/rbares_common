@@ -9,8 +9,8 @@ robotnik_base_control:
       joint_name: $(arg prefix)steer_joint
       max_angle: 1.57 # rad
       min_angle: -1.57
-  elevator_joint:
-    name: $(arg prefix)elevator_platform_joint
+  #elevator_joint:
+  #   name: $(arg prefix)elevator_platform_joint
   limits:
     elevator_down:
       linear_speed_limit: 1.5 # m/s
