@@ -8,6 +8,6 @@ global_costmap:
   plugins:
     - {name: static_layer,            type: "costmap_2d::StaticLayer"}
     - {name: obstacle_layer,          type: "costmap_2d::VoxelLayer"}
-    - {name: robot_detection_layer,   type: "robot_detection_layer::RobotDetectionLayer"}
+    # - {name: robot_detection_layer,   type: "robot_detection_layer::RobotDetectionLayer"}
     # - {name: human_detection_layer,   type: "human_detection_layer::HumanDetectionLayer"}
     - {name: inflation_layer,         type: "costmap_2d::InflationLayer"}
