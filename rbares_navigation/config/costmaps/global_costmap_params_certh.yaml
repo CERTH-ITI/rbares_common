@@ -1,7 +1,6 @@
 global_costmap:
   global_frame: map
   robot_base_frame: base_footprint
-  static_map: false
   update_frequency: 10.0
   publish_frequency: 10.0
   
@@ -11,3 +10,4 @@ global_costmap:
     - {name: robot_detection_layer,   type: "robot_detection_layer::RobotDetectionLayer"}
     - {name: human_detection_layer,   type: "human_detection_layer::HumanDetectionLayer"}
     - {name: inflation_layer,         type: "costmap_2d::InflationLayer"}
+    
